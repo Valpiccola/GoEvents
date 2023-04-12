@@ -3,11 +3,15 @@
 Event Recorder API is a simple RESTful API service that records events from different clients such as browsers or mobile applications. It provides a single endpoint /record_event to record events and store them into a PostgreSQL database. The API also provides additional information about the client's IP address and User Agent if specified.
 
 ## Table of Contents
-Requirements
-Installation
-Configuration
-Running the API
-Running the tests
+<!-- vim-markdown-toc GFM -->
+
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Running the API](#running-the-api)
+* [Running the tests](#running-the-tests)
+
+<!-- vim-markdown-toc -->
 
 ## Requirements
 - Go 1.17+
@@ -37,14 +41,14 @@ go get -d ./...
 
 The application expects several environment variables to be set for configuration:
 
-DB_USER: PostgreSQL database user.
-DB_PASS: PostgreSQL database password.
-DB_HOST: PostgreSQL database host.
-DB_PORT: PostgreSQL database port.
-DB_NAME: PostgreSQL database name.
-DB_SCHEMA: Database schema where the event table is located.
-ENV: Environment of the application (i.e., production, staging).
-IPINFO_TOKEN: IPInfo API token for IP address details retrieval.
+- **DB_USER**: PostgreSQL database user.
+- **DB_PASS**: PostgreSQL database password.
+- **DB_HOST**: PostgreSQL database host.
+- **DB_PORT**: PostgreSQL database port.
+- **DB_NAME**: PostgreSQL database name.
+- **DB_SCHEMA**: Database schema where the event table is located.
+- **ENV**: Environment of the application (i.e., production, staging).
+- **IPINFO_TOKEN**: IPInfo API token for IP address details retrieval.
 
 ## Running the API
 1. Build the API binary:
