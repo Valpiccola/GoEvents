@@ -1,0 +1,37 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - name: Test
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASS: ${{ secrets.DB_PASS }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
+        SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
+        SANITY_KEY: ${{ secrets.SANITY_KEY }}
+        DEEPL_TOKEN: ${{ secrets.DEEPL_TOKEN }}
+        GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+        TRIP_ADVISOR_API_KEY: ${{ secrets.TRIP_ADVISOR_API_KEY }}
+      run: go test -parallel 1
