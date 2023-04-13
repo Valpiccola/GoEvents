@@ -1,25 +1,3 @@
-/**
-
-######## Define the Event struct
-This struct represents an event with fields such as Cookie, Referrer,
-Page, Event_name, and other relevant information.
-It also includes fields for storing IP-related information and parsed User-Agent data.
-
-######## RecordEvent
-This function handles incoming HTTP requests and does the following:
-a. Bind the request JSON data to the Event struct.
-b. Extract the client IP address and User-Agent header from the request.
-c. If the Deep field is true, fetch IP-related details using GetIpDetails() function and parse User-Agent data.
-d. Marshal the Event struct into JSON format.
-e. Insert the JSON data into the event table in the database.
-f. Return an appropriate HTTP response.
-
-######## GetIpDetails
-This function takes an IP address as input and returns IP-related information using the IPInfo package.
-It requires an API token, which is set using the IPINFO_TOKEN environment variable.
-
-*/
-
 package main
 
 import (

@@ -1,25 +1,46 @@
 # GoEvents Recorder API
 
-Event Recorder API is a simple RESTful API service that records events from different clients such as browsers or mobile applications. It provides a single endpoint /record_event to record events and store them into a PostgreSQL database. The API also provides additional information about the client's IP address and User Agent if specified.
+Event Recorder API is a lightweight, efficient, and scalable RESTful service designed to capture user events from web and mobile applications. It provides a straightforward and secure way to log events and store them in a PostgreSQL database for further analysis. The API also supports enriching event data with client IP address and User Agent information when requested.
 
 ## Table of Contents
 <!-- vim-markdown-toc GFM -->
 
-* [Requirements](#requirements)
-* [Installation](#installation)
-* [Configuration](#configuration)
+* [Features](#features)
+* [Use Cases](#use-cases)
+* [Getting Started](#getting-started)
+  * [Requirements](#requirements)
+  * [Installation](#installation)
+  * [Configuration](#configuration)
+  * [Preparing the database](#preparing-the-database)
 * [Running the API](#running-the-api)
-* [Running the tests](#running-the-tests)
+  * [Running the tests](#running-the-tests)
 * [Integrating with Frontend](#integrating-with-frontend)
   * [Usage](#usage)
 
 <!-- vim-markdown-toc -->
 
-## Requirements
+## Features
+- Simple and easy-to-use RESTful API
+- Secure event recording with CORS support
+- IP address and User Agent enrichment (optional)
+- Extensive test coverage
+- Seamless frontend integration using a provided JavaScript function
+- Scalable and adaptable design
+
+
+## Use Cases
+- Web analytics and user behavior tracking
+- A/B testing and feature rollout monitoring
+- Performance and error reporting
+- Custom event logging for tailored insights
+
+## Getting Started
+
+### Requirements
 - Go 1.17+
 - PostgreSQL 13.0+
 
-## Installation
+### Installation
 
 1. Clone the repository:
 
@@ -39,7 +60,7 @@ cd GoEvents
 go get -d ./...
 ```
 
-## Configuration
+### Configuration
 
 The application expects several environment variables to be set for configuration:
 
@@ -49,8 +70,20 @@ The application expects several environment variables to be set for configuratio
 - **DB_PORT**: PostgreSQL database port.
 - **DB_NAME**: PostgreSQL database name.
 - **DB_SCHEMA**: Database schema where the event table is located.
+- **ALLOWED_ORIGINS**: Endpoints of your frontend framework
 - **ENV**: Environment of the application (i.e., production, staging).
 - **IPINFO_TOKEN**: IPInfo API token for IP address details retrieval.
+
+### Preparing the database
+Before you can start recording events and analyzing the captured data, it is essential to create a proper query to extract the relevant information from the stored events. 
+
+```sql
+CREATE TABLE IF NOT EXISTS event (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    details JSONB NOT NULL
+);
+```
 
 ## Running the API
 1. Build the API binary:
@@ -71,7 +104,7 @@ The API server will start listening on port 8080. You can test the /record_event
 curl -X POST -H "Content-Type: application/json" -d '{"Event_name": "test_event"}' http://localhost:8080/record_event
 ```
 
-## Running the tests
+### Running the tests
 
 To run the tests, execute the following command:
 ```
@@ -85,10 +118,8 @@ To use this API in your frontend application, you can create a registerEvent.js 
 
 ### Usage
 1. Create a new file named registerEvent.js in your frontend project:
-````javascript
-import {
-  PUBLIC_API_HTTP_URL,
-} from "$env/static/public"
+```javascript
+const PUBLIC_API_HTTP_URL = '';
 
 export async function registerEvent(page, event_name, deep, details) {
   fetch(PUBLIC_API_HTTP_URL + "/record_event", {
@@ -113,6 +144,7 @@ export async function registerEvent(page, event_name, deep, details) {
 2. Set the PUBLIC_API_HTTP_URL environment variable in your frontend application to the API's base URL (e.g., http://localhost:8080).
 
 3. Import the registerEvent function in your frontend application and call it when you need to record an event:
+
 ```javascript
 import { registerEvent } from "./registerEvent";
 
