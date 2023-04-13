@@ -22,6 +22,7 @@ GoEvents is a lightweight, efficient, and scalable RESTful service designed to c
   * [Usage](#usage)
 * [Deploy it on DigitalOcean](#deploy-it-on-digitalocean)
 * [Visualize your data](#visualize-your-data)
+* [Continuous Integration and Deployment (CI/CD) Pipeline](#continuous-integration-and-deployment-cicd-pipeline)
 
 <!-- vim-markdown-toc -->
 
@@ -210,3 +211,6 @@ where details#>>'{Referrer}' like '%google%'
 group by 1
 order by 1;
 ```
+
+## Continuous Integration and Deployment (CI/CD) Pipeline
+This project includes a GitHub Actions workflow for Continuous Integration (CI) and Continuous Deployment (CD). The workflow is configured in the .github/workflows/go.yml file. It is triggered on every push and pull request to the main branch. The pipeline sets up a Go environment, installs the required dependencies, and runs the tests using the go test command. The environment variables required for running the tests are securely stored as GitHub Secrets and passed to the pipeline. This ensures that the code is always tested, and potential issues are detected early, making it easier to maintain the codebase and deploy it to production.

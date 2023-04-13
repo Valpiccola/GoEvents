@@ -29,9 +29,4 @@ jobs:
         DB_PORT: ${{ secrets.DB_PORT }}
         DB_NAME: ${{ secrets.DB_NAME }}
         IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
-        SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
-        SANITY_KEY: ${{ secrets.SANITY_KEY }}
-        DEEPL_TOKEN: ${{ secrets.DEEPL_TOKEN }}
-        GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
-        TRIP_ADVISOR_API_KEY: ${{ secrets.TRIP_ADVISOR_API_KEY }}
       run: go test -parallel 1
