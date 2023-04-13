@@ -212,5 +212,8 @@ group by 1
 order by 1;
 ```
 
+<img width="1718" alt="Screenshot 2023-04-13 at 03 43 37" src="https://user-images.githubusercontent.com/30242227/231624627-9092c611-9167-43aa-8773-c45ee7ebfc74.png">
+
+
 ## Continuous Integration and Deployment (CI/CD) Pipeline
 This project includes a GitHub Actions workflow for Continuous Integration (CI) and Continuous Deployment (CD). The workflow is configured in the .github/workflows/go.yml file. It is triggered on every push and pull request to the main branch. The pipeline sets up a Go environment, installs the required dependencies, and runs the tests using the go test command. The environment variables required for running the tests are securely stored as GitHub Secrets and passed to the pipeline. This ensures that the code is always tested, and potential issues are detected early, making it easier to maintain the codebase and deploy it to production.
