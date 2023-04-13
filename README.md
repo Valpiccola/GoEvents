@@ -16,6 +16,7 @@ Event Recorder API is a lightweight, efficient, and scalable RESTful service des
   * [Running the tests](#running-the-tests)
 * [Integrating with Frontend](#integrating-with-frontend)
   * [Usage](#usage)
+* [Deploy it on DigitalOcean](#deploy-it-on-digitalocean)
 
 <!-- vim-markdown-toc -->
 
@@ -162,3 +163,17 @@ This function takes four parameters:
 The registerEvent function will send a POST request to the /record_event endpoint of the API with the provided information.
 
 This way, you can easily integrate the Event Recorder API with your frontend application and start recording events in your application.
+
+## Deploy it on DigitalOcean
+
+To deploy this API endpoint on DigitalOcean, you'll need to create a folder named ".do" in your project's root directory and add an appropriate app.yaml file within it.
+
+```yaml
+name: YOUR_APP_NAME
+services:
+- name: YOUR_SERVICE_NAME
+  github:
+    repo: YOUR_REPO
+    branch: YOUR_BRANCH
+```
+
