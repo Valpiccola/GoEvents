@@ -192,16 +192,17 @@ SELECT
     COUNT(DISTINCT(details#>>'{Cookie}')) AS unique_visitors
 FROM event
 group by 1
-order by 1
+order by 1;
 ```
 
 **Events from Google per week:**
 
 ```sql
-SELECT
+select
     to_char(created_at::date, 'yyyy_iw') as year_week,
-    COUNT(DISTINCT(details#>>'{Cookie}')) AS unique_visitors
-FROM event
+    count(distinct details#>>'{Ip}') as ip
+from event
+where details#>>'{Referrer}' like '%google%'
 group by 1
-order by 1
+order by 1;
 ```
