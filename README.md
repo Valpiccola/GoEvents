@@ -193,7 +193,7 @@ SELECT
 FROM event
 group by 1
 order by 1
-´´´
+```
 
 **Events from Google per week:**
 
@@ -204,4 +204,4 @@ SELECT
 FROM event
 group by 1
 order by 1
-´´´
+```
