@@ -1,4 +1,4 @@
-module github.com/Valpiccola/GoEvents.git
+module github.com/Valpiccola/GoEvents
 
 go 1.20
 

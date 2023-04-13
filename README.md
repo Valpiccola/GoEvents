@@ -10,6 +10,8 @@ Event Recorder API is a simple RESTful API service that records events from diff
 * [Configuration](#configuration)
 * [Running the API](#running-the-api)
 * [Running the tests](#running-the-tests)
+* [Integrating with Frontend](#integrating-with-frontend)
+  * [Usage](#usage)
 
 <!-- vim-markdown-toc -->
 
@@ -22,13 +24,13 @@ Event Recorder API is a simple RESTful API service that records events from diff
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/event-recorder-api.git
+git clone https://github.com/Valpiccola/GoEvents
 ```
 
 2. Change to the project directory:
 
 ```bash
-cd event-recorder-api
+cd GoEvents
 ```
 
 3. Install the required Go packages:
@@ -54,13 +56,13 @@ The application expects several environment variables to be set for configuratio
 1. Build the API binary:
 
 ```bash
-go build -o event-recorder-api
+go build
 ```
 
 2. Run the API server:
 
 ```bash
-./event-recorder-api
+./GoEvents 
 ```
 
 The API server will start listening on port 8080. You can test the /record_event endpoint with a simple curl command:
@@ -77,3 +79,54 @@ go test -v ./...
 ```
 
 The tests will automatically set the DB_SCHEMA environment variable to test and create a test database connection. Make sure to have a proper test database and schema configured before running the tests.
+
+## Integrating with Frontend
+To use this API in your frontend application, you can create a registerEvent.js file. This file contains a function called registerEvent that sends an event to the API using the fetch function.
+
+### Usage
+1. Create a new file named registerEvent.js in your frontend project:
+````javascript
+import {
+  PUBLIC_API_HTTP_URL,
+} from "$env/static/public"
+
+export async function registerEvent(page, event_name, deep, details) {
+  fetch(PUBLIC_API_HTTP_URL + "/record_event", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      Page: page,
+      Event_name: event_name,
+      Referrer: document.referrer,
+      Cookie: document.cookie.match('(^|;)\\s*userId\\s*=\\s*([^;]+)')?.pop() || '',
+      Size: innerWidth.toString()+"x"+innerHeight.toString(),
+      Language: navigator.language,
+      Deep: deep,
+      Details: details
+    })
+  });
+}
+```
+
+2. Set the PUBLIC_API_HTTP_URL environment variable in your frontend application to the API's base URL (e.g., http://localhost:8080).
+
+3. Import the registerEvent function in your frontend application and call it when you need to record an event:
+```javascript
+import { registerEvent } from "./registerEvent";
+
+// Example usage
+registerEvent("home", "button_click", true, { button_id: "my-button" });
+```
+
+This function takes four parameters:
+
+- page: The name of the page where the event occurred (e.g., "home").
+- event_name: The name of the event (e.g., "button_click").
+- deep: A boolean value indicating if additional information about the client's IP address and User Agent should be retrieved. Set to true to enable this feature.
+- details: An object containing any additional details related to the event.
+
+The registerEvent function will send a POST request to the /record_event endpoint of the API with the provided information.
+
+This way, you can easily integrate the Event Recorder API with your frontend application and start recording events in your application.
