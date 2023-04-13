@@ -17,6 +17,7 @@ Event Recorder API is a lightweight, efficient, and scalable RESTful service des
 * [Integrating with Frontend](#integrating-with-frontend)
   * [Usage](#usage)
 * [Deploy it on DigitalOcean](#deploy-it-on-digitalocean)
+* [Visualize your data](#visualize-your-data)
 
 <!-- vim-markdown-toc -->
 
@@ -177,3 +178,30 @@ services:
     branch: YOUR_BRANCH
 ```
 
+## Visualize your data
+
+Once you have collected event data in your database, you might want to visualize and analyze it. One way to do this is by connecting your database to a tool like [Metabase](https://www.metabase.com/), which allows you to create interactive dashboards and visualizations with ease.
+
+With a tool like Metabase, you can write custom queries to analyze your data. For example, you can determine the number of unique visitors per week or find out how many events came from Google searches. Here are some example queries you can use:
+
+**Number of unique visitors per week:**
+
+```sql
+SELECT
+    to_char(created_at::date, 'yyyy_iw') as year_week,
+    COUNT(DISTINCT(details#>>'{Cookie}')) AS unique_visitors
+FROM event
+group by 1
+order by 1
+´´´
+
+**Events from Google per week:**
+
+```sql
+SELECT
+    to_char(created_at::date, 'yyyy_iw') as year_week,
+    COUNT(DISTINCT(details#>>'{Cookie}')) AS unique_visitors
+FROM event
+group by 1
+order by 1
+´´´
