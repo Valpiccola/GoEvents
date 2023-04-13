@@ -1,6 +1,10 @@
 # GoEvents Recorder API
 
-Event Recorder API is a lightweight, efficient, and scalable RESTful service designed to capture user events from web and mobile applications. It provides a straightforward and secure way to log events and store them in a PostgreSQL database for further analysis. The API also supports enriching event data with client IP address and User Agent information when requested.
+In today's digital world, it's crucial to have a fully flexible system to manage and track user events on your web and mobile applications. Proprietary software like Google Analytics may not offer the customization and control you need, while alternatives like Plausible may lack some advanced features. 
+
+**This is where the GoEvents comes in**.
+
+GoEvents is a lightweight, efficient, and scalable RESTful service designed to capture user events from web and mobile applications. It provides a straightforward and secure way to log events and store them in a PostgreSQL database for further analysis. The API also supports enriching event data with client IP address and User Agent information when requested.
 
 ## Table of Contents
 <!-- vim-markdown-toc GFM -->
