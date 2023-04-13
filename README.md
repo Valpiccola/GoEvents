@@ -65,15 +65,15 @@ go get -d ./...
 
 The application expects several environment variables to be set for configuration:
 
-- **DB_USER**: PostgreSQL database user.
-- **DB_PASS**: PostgreSQL database password.
-- **DB_HOST**: PostgreSQL database host.
-- **DB_PORT**: PostgreSQL database port.
-- **DB_NAME**: PostgreSQL database name.
-- **DB_SCHEMA**: Database schema where the event table is located.
-- **ALLOWED_ORIGINS**: Endpoints of your frontend framework
+- **DB_USER**: PostgreSQL database user (e.g., `mydbuser`).
+- **DB_PASS**: PostgreSQL database password (e.g., `mypassword`).
+- **DB_HOST**: PostgreSQL database host (e.g., `localhost`).
+- **DB_PORT**: PostgreSQL database port (e.g., `5432`).
+- **DB_NAME**: PostgreSQL database name (e.g., `mydbname`).
+- **DB_SCHEMA**: Database schema where the event table is located (e.g., `public`).
+- **ALLOWED_ORIGINS**: Endpoints of your frontend framework (e.g., `http://localhost:3000`).
 - **ENV**: Environment of the application (i.e., production, staging).
-- **IPINFO_TOKEN**: IPInfo API token for IP address details retrieval.
+- **IPINFO_TOKEN**: IPInfo API token for IP address details retrieval (e.g., `1234567890abcdef`).
 
 ### Preparing the database
 Before you can start recording events and analyzing the captured data, it is essential to create a proper query to extract the relevant information from the stored events. 
@@ -120,7 +120,7 @@ To use this API in your frontend application, you can create a registerEvent.js 
 ### Usage
 1. Create a new file named registerEvent.js in your frontend project:
 ```javascript
-const PUBLIC_API_HTTP_URL = '';
+const PUBLIC_API_HTTP_URL = 'http://localhost:8080';
 
 export async function registerEvent(page, event_name, deep, details) {
   fetch(PUBLIC_API_HTTP_URL + "/record_event", {
