@@ -1,4 +1,4 @@
-# GoEvents Recorder API
+# GoEvents
 
 In today's digital world, it's crucial to have a fully flexible system to manage and track user events on your web and mobile applications. Proprietary software like Google Analytics may not offer the customization and control you need, while alternatives like Plausible may lack some advanced features. 
 
