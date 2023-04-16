@@ -60,8 +60,11 @@ func SetUpDb() (db *sql.DB) {
 }
 
 func SetUpCORS() gin.HandlerFunc {
+
 	return func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")
+
+		fmt.Println("THIS IS THE ORIGIN", c.Request.Header.Get("Origin"))
 
 		if os.Getenv("ENV") == "production" {
 			allowedOrigins := map[string]bool{
