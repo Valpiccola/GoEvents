@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -63,6 +62,36 @@ func SetUpDb() (db *sql.DB) {
 func SetUpCORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")
+
+		if os.Getenv("ENV") == "production" {
+			allowedOrigins := map[string]bool{
+				"https://valpiccola.com":     true,
+				"https://www.valpiccola.com": true,
+			}
+
+			if _, ok := allowedOrigins[origin]; ok {
+				c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+			}
+		} else if os.Getenv("ENV") == "staging" {
+			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		}
+
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
+/* func SetUpCORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		origin := c.Request.Header.Get("Origin")
 		env := os.Getenv("ENV")
 
 		if env == "production" {
@@ -72,7 +101,10 @@ func SetUpCORS() gin.HandlerFunc {
 			allowedOrigins := make(map[string]bool)
 			for _, o := range allowedOriginsList {
 				allowedOrigins[strings.TrimSpace(o)] = true
+				fmt.Println(strings.TrimSpace(o))
 			}
+
+			fmt.Println(allowedOrigins)
 
 			if _, ok := allowedOrigins[origin]; ok {
 				c.Writer.Header().Set("Access-Control-Allow-Origin",
@@ -96,4 +128,4 @@ func SetUpCORS() gin.HandlerFunc {
 
 		c.Next()
 	}
-}
+} */
