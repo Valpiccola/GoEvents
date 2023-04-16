@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -61,24 +62,23 @@ func SetUpDb() (db *sql.DB) {
 
 func SetUpCORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// origin := c.Request.Header.Get("Origin")
+		origin := c.Request.Header.Get("Origin")
 		env := os.Getenv("ENV")
 
 		if env == "production" {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-			/* allowedOriginsStr := os.Getenv("ALLOWED_ORIGINS")
+			allowedOriginsStr := os.Getenv("ALLOWED_ORIGINS")
 			allowedOriginsList := strings.Split(allowedOriginsStr, ",")
 
 			allowedOrigins := make(map[string]bool)
 			for _, o := range allowedOriginsList {
 				allowedOrigins[strings.TrimSpace(o)] = true
-				fmt.Println(strings.TrimSpace(o))
 			}
 
 			if _, ok := allowedOrigins[origin]; ok {
 				c.Writer.Header().Set("Access-Control-Allow-Origin",
 					origin)
-			} */
+			}
 		} else if env == "staging" {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		}
