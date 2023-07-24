@@ -68,11 +68,11 @@ func SetUpDb() (db *sql.DB) {
 }
 
 func getCORSConfig() gin.HandlerFunc {
-	if os.Getenv("ENV") == "production" {
-
+	env := os.Getenv("ENV")
+	switch env {
+	case "production":
 		origins := os.Getenv("ALLOWED_ORIGINS")
 		originsSlice := strings.Split(origins, ",")
-
 		return cors.New(cors.Config{
 			AllowOrigins: originsSlice,
 			AllowMethods: []string{"POST", "OPTIONS", "GET"},
@@ -91,7 +91,9 @@ func getCORSConfig() gin.HandlerFunc {
 			AllowCredentials: true,
 			MaxAge:           12 * time.Hour,
 		})
+	case "staging":
+		return cors.Default()
+	default:
+		return nil
 	}
-
-	return nil // return nil or appropriate default CORS settings for non-production environments
 }

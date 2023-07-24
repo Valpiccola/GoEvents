@@ -12,14 +12,14 @@ GoEvents is a lightweight, efficient, and scalable RESTful service designed to c
 * [Features](#features)
 * [Use Cases](#use-cases)
 * [Getting Started](#getting-started)
-  * [Requirements](#requirements)
-  * [Installation](#installation)
-  * [Configuration](#configuration)
-  * [Preparing the database](#preparing-the-database)
+    * [Requirements](#requirements)
+    * [Installation](#installation)
+    * [Configuration](#configuration)
+    * [Preparing the database](#preparing-the-database)
 * [Running the API](#running-the-api)
-  * [Running the tests](#running-the-tests)
+    * [Running the tests](#running-the-tests)
 * [Integrating with Frontend](#integrating-with-frontend)
-  * [Usage](#usage)
+    * [Usage](#usage)
 * [Deploy it on DigitalOcean](#deploy-it-on-digitalocean)
 * [Visualize your data](#visualize-your-data)
 * [Continuous Integration and Deployment (CI/CD) Pipeline](#continuous-integration-and-deployment-cicd-pipeline)
@@ -77,9 +77,11 @@ The application expects several environment variables to be set for configuratio
 - **DB_PORT**: PostgreSQL database port (e.g., `5432`).
 - **DB_NAME**: PostgreSQL database name (e.g., `mydbname`).
 - **DB_SCHEMA**: Database schema where the event table is located (e.g., `public`).
-- **ALLOWED_ORIGINS**: Endpoints of your frontend framework (e.g., `http://localhost:3000`).
+- **ALLOWED_ORIGINS**: Endpoints of your frontend framework (e.g., "`http://localhost:3000, http://localhost:8080`").
 - **ENV**: Environment of the application (i.e., production, staging).
 - **IPINFO_TOKEN**: IPInfo API token for IP address details retrieval (e.g., `1234567890abcdef`).
+
+When `ENV=staging`, the server will allow any origin (`*`).
 
 ### Preparing the database
 Before you can start recording events and analyzing the captured data, it is essential to create a proper query to extract the relevant information from the stored events. 
