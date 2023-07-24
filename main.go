@@ -3,7 +3,9 @@ package main
 import (
 	"os"
 	"strings"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
@@ -24,10 +26,15 @@ func main() {
 	defer Db.Close()
 
 	router := gin.New()
-	router.Use(SetUpCORS())
+
+	corsConfig := getCORSConfig()
+	if corsConfig != nil {
+		router.Use(corsConfig)
+	}
+
 	router.POST("/record_event", RecordEvent)
 
-	router.Run(":8080")
+	log.Fatal(router.Run(":8080"))
 }
 
 func SetUpDb() (db *sql.DB) {
@@ -60,41 +67,31 @@ func SetUpDb() (db *sql.DB) {
 	return
 }
 
-func SetUpCORS() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		origin := c.Request.Header.Get("Origin")
-		env := os.Getenv("ENV")
+func getCORSConfig() gin.HandlerFunc {
+	if os.Getenv("ENV") == "production" {
 
-		if env == "production" {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-			allowedOriginsStr := os.Getenv("ALLOWED_ORIGINS")
-			allowedOriginsList := strings.Split(allowedOriginsStr, ",")
+		origins := os.Getenv("ALLOWED_ORIGINS")
+		originsSlice := strings.Split(origins, ",")
 
-			allowedOrigins := make(map[string]bool)
-			for _, o := range allowedOriginsList {
-				allowedOrigins[strings.TrimSpace(o)] = true
-			}
-
-			if _, ok := allowedOrigins[origin]; ok {
-				c.Writer.Header().Set("Access-Control-Allow-Origin",
-					origin)
-			}
-		} else if env == "staging" {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		}
-
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers",
-			"Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, "+
-				"Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods",
-			"POST, OPTIONS, GET")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
+		return cors.New(cors.Config{
+			AllowOrigins: originsSlice,
+			AllowMethods: []string{"POST", "OPTIONS", "GET"},
+			AllowHeaders: []string{
+				"Content-Type",
+				"Content-Length",
+				"Accept-Encoding",
+				"X-CSRF-Token",
+				"Authorization",
+				"accept",
+				"origin",
+				"Cache-Control",
+				"X-Requested-With",
+			},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		})
 	}
+
+	return nil // return nil or appropriate default CORS settings for non-production environments
 }
