@@ -60,8 +60,17 @@ func RecordEvent(c *gin.Context) {
 		INSERT INTO %s.event (created_at, details)
 		VALUES (current_timestamp, $1);
 	`
-	q_event_ready := fmt.Sprintf(q_event, os.Getenv("DB_SCHEMA"))
-	_, err = Db.Exec(q_event_ready, b_event)
+	stmt, err := Db.Prepare(fmt.Sprintf(q_event, os.Getenv("DB_SCHEMA")))
+	if err != nil {
+		log.WithFields(log.Fields{
+			"custom_msg": "Error preparing the query",
+		}).Error(err)
+		c.String(http.StatusBadRequest, "KO")
+    		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(b_event)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"customMsg": "Error saving event in db",
