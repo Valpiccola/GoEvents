@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -33,8 +34,9 @@ func main() {
 	}
 
 	router.POST("/record_event", RecordEvent)
+	router.GET("/health", healthCheckHandler)
 
-	log.Fatal(router.Run(":8080"))
+	log.Fatal(router.Run(":8085"))
 }
 
 func SetUpDb() (db *sql.DB) {
@@ -96,4 +98,18 @@ func getCORSConfig() gin.HandlerFunc {
 	default:
 		return nil
 	}
+}
+
+func healthCheckHandler(c *gin.Context) {
+	if err := Db.Ping(); err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{"status": "error", "message": "Database is disconnected"},
+		)
+		return
+	}
+	c.JSON(
+		http.StatusOK,
+		gin.H{"status": "success", "message": "API is healthy"},
+	)
 }
