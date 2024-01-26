@@ -40,6 +40,8 @@ func RecordEvent(c *gin.Context) {
 		return
 	}
 
+	fmt.Println(event)
+
 	event.Ip = c.ClientIP()
 	event.UserAgent = c.Request.Header.Get("User-Agent")
 	if event.Deep {
@@ -56,24 +58,24 @@ func RecordEvent(c *gin.Context) {
 		return
 	}
 
-	q_event := `
+	q := fmt.Sprintf(`
 		INSERT INTO %s.event (created_at, details)
 		VALUES (current_timestamp, $1);
-	`
-	stmt, err := Db.Prepare(fmt.Sprintf(q_event, os.Getenv("DB_SCHEMA")))
+	`, os.Getenv("DB_SCHEMA"))
+
+	stmt, err := Db.Prepare(q)
 	if err != nil {
 		log.WithFields(log.Fields{
-			"custom_msg": "Error preparing the query",
+			"custom_msg": "Error preparing query",
 		}).Error(err)
 		c.String(http.StatusBadRequest, "KO")
-    		return
+		return
 	}
-	defer stmt.Close()
 
 	_, err = stmt.Exec(b_event)
 	if err != nil {
 		log.WithFields(log.Fields{
-			"customMsg": "Error saving event in db",
+			"custom_msg": "Error saving event in db",
 		}).Error(err)
 		c.String(http.StatusBadRequest, "KO")
 		return
