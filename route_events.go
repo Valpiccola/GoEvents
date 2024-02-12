@@ -18,6 +18,7 @@ type Event struct {
 	Referrer      string                 `json:"Referrer"`
 	Page          string                 `json:"Page"`
 	Event_name    string                 `json:"Event_name"`
+	UserID        string                 `json:"UserID"`
 	Size          string                 `json:"Size"`
 	Language      string                 `json:"Language"`
 	Deep          bool                   `json:"Deep"`
