@@ -42,7 +42,7 @@ func main() {
 func SetUpDb() (db *sql.DB) {
 
 	DbUrl = fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s",
+		"postgres://%s:%s@%s:%s/%s?client_encoding=utf8",
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASS"),
 		os.Getenv("DB_HOST"),
