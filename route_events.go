@@ -42,8 +42,6 @@ func RecordEvent(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(event)
-
 	event.Ip = c.ClientIP()
 	event.UserAgent = c.Request.Header.Get("User-Agent")
 	if event.Deep {

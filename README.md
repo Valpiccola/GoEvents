@@ -141,6 +141,7 @@ export async function registerEvent(page, event_name, deep, details) {
       Event_name: event_name,
       Referrer: document.referrer,
       Cookie: document.cookie.match('(^|;)\\s*userId\\s*=\\s*([^;]+)')?.pop() || '',
+      Ref: document.cookie.match('(^|;)\\s*ref\\s*=\\s*([^;]+)')?.pop() || '',
       Size: innerWidth.toString()+"x"+innerHeight.toString(),
       Language: navigator.language,
       Deep: deep,
