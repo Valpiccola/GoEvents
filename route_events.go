@@ -22,6 +22,7 @@ type Event struct {
 	Size          string                 `json:"Size"`
 	Language      string                 `json:"Language"`
 	Deep          bool                   `json:"Deep"`
+	Ref           string                 `json:"Ref"`
 	Details       map[string]interface{} `json:"Details"`
 	Ip            string
 	UserAgent     string
