@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -75,8 +76,32 @@ func getCORSConfig() gin.HandlerFunc {
 	case "production":
 		origins := os.Getenv("ALLOWED_ORIGINS")
 		originsSlice := strings.Split(origins, ",")
+
+		// Create regex patterns for each origin that allow for dynamic subdomains
+		allowedOriginPatterns := make([]*regexp.Regexp, len(originsSlice))
+		for i, origin := range originsSlice {
+			// Escape special regex characters in the origin
+			pattern := regexp.QuoteMeta(origin)
+
+			// Allow an optional dynamic subdomain of the form:
+			// {any-subdomain}--{number}.
+			// This regex ensures that only the specified domains (and their subdomains) are allowed,
+			// while permitting dynamic numbered variations.
+			pattern = strings.Replace(pattern, "://", "://(?:[^.]+--\\d+\\.)?", 1)
+
+			// Ensure full string match to prevent partial matches
+			allowedOriginPatterns[i] = regexp.MustCompile("^" + pattern + "$")
+		}
+
 		return cors.New(cors.Config{
-			AllowOrigins: originsSlice,
+			AllowOriginFunc: func(origin string) bool {
+				for _, pattern := range allowedOriginPatterns {
+					if pattern.MatchString(origin) {
+						return true
+					}
+				}
+				return false
+			},
 			AllowMethods: []string{"POST", "OPTIONS", "GET"},
 			AllowHeaders: []string{
 				"Content-Type",
