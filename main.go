@@ -93,6 +93,8 @@ func getCORSConfig() gin.HandlerFunc {
 			allowedOriginPatterns[i] = regexp.MustCompile("^" + pattern + "$")
 		}
 
+		fmt.Println(allowedOriginPatterns)
+
 		return cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
 				for _, pattern := range allowedOriginPatterns {
