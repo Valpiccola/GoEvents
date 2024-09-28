@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -73,25 +74,32 @@ func getCORSConfig() gin.HandlerFunc {
 	env := os.Getenv("ENV")
 	switch env {
 	case "production":
-		origins := os.Getenv("ALLOWED_ORIGINS")
-		originsSlice := strings.Split(origins, ",")
+		allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
+		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
+
 		return cors.New(cors.Config{
-			AllowOrigins: originsSlice,
-			AllowMethods: []string{"POST", "OPTIONS", "GET"},
-			AllowHeaders: []string{
-				"Content-Type",
-				"Content-Length",
-				"Accept-Encoding",
-				"X-CSRF-Token",
-				"Authorization",
-				"accept",
-				"origin",
-				"Cache-Control",
-				"X-Requested-With",
+			AllowOriginFunc: func(origin string) bool {
+				for _, allowedOrigin := range allowedOrigins {
+					if allowedOrigin == origin {
+						return true
+					}
+				}
+
+				for _, pattern := range allowedPatterns {
+					if pattern != "" {
+						if matched, _ := regexp.MatchString(pattern, origin); matched {
+							return true
+						}
+					}
+				}
+
+				return false
 			},
-			ExposeHeaders:    []string{"Content-Length"},
-			AllowCredentials: true,
-			MaxAge:           12 * time.Hour,
+			AllowMethods:     strings.Split(os.Getenv("ALLOWED_METHODS"), ","),
+			AllowHeaders:     strings.Split(os.Getenv("ALLOWED_HEADERS"), ","),
+			ExposeHeaders:    strings.Split(os.Getenv("EXPOSE_HEADERS"), ","),
+			AllowCredentials: os.Getenv("ALLOW_CREDENTIALS") == "true",
+			MaxAge:           12 * time.Hour, // Questo potrebbe anche essere configurabile
 		})
 	case "staging":
 		return cors.Default()
