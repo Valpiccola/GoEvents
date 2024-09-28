@@ -78,33 +78,30 @@ func getCORSConfig() gin.HandlerFunc {
 		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
 
 		return cors.New(cors.Config{
-			AllowOrigins: allowedOrigins,
-			AllowMethods: []string{"POST", "OPTIONS", "GET"},
-			AllowHeaders: []string{
-				"Origin", "Content-Type", "Content-Length",
-				"Accept-Encoding", "X-CSRF-Token", "Authorization",
-				"Accept", "Cache-Control", "X-Requested-With",
-			},
-			ExposeHeaders:    []string{"Content-Length"},
-			AllowCredentials: true,
 			AllowOriginFunc: func(origin string) bool {
+				// Check exact matches
+				for _, allowedOrigin := range allowedOrigins {
+					if allowedOrigin == origin {
+						return true
+					}
+				}
+
+				// Check patterns
 				for _, pattern := range allowedPatterns {
 					if pattern != "" {
-						if matched, err := regexp.MatchString(
-							pattern,
-							origin,
-						); err == nil && matched {
+						if matched, _ := regexp.MatchString("^"+pattern+"$", origin); matched {
 							return true
 						}
 					}
 				}
-				log.WithFields(log.Fields{
-					"origin": origin,
-					"reason": "CORS blocked (pattern mismatch)",
-				}).Warn("Request blocked by CORS policy")
+
 				return false
 			},
-			MaxAge: 12 * time.Hour,
+			AllowMethods:     []string{"POST", "OPTIONS", "GET"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "Accept", "Cache-Control", "X-Requested-With"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
 		})
 	case "staging":
 		return cors.Default()
