@@ -76,6 +76,7 @@ func getCORSConfig() gin.HandlerFunc {
 	case "production":
 		allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
 		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
+
 		return cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
 				for _, allowedOrigin := range allowedOrigins {
@@ -83,6 +84,7 @@ func getCORSConfig() gin.HandlerFunc {
 						return true
 					}
 				}
+
 				for _, pattern := range allowedPatterns {
 					if pattern != "" {
 						if matched, _ := regexp.MatchString(pattern, origin); matched {
@@ -90,18 +92,14 @@ func getCORSConfig() gin.HandlerFunc {
 						}
 					}
 				}
-				// Log blocked origin
-				log.WithFields(log.Fields{
-					"origin": origin,
-					"reason": "CORS blocked",
-				}).Warn("Request blocked by CORS policy")
+
 				return false
 			},
 			AllowMethods:     strings.Split(os.Getenv("ALLOWED_METHODS"), ","),
 			AllowHeaders:     strings.Split(os.Getenv("ALLOWED_HEADERS"), ","),
 			ExposeHeaders:    strings.Split(os.Getenv("EXPOSE_HEADERS"), ","),
 			AllowCredentials: os.Getenv("ALLOW_CREDENTIALS") == "true",
-			MaxAge:           12 * time.Hour,
+			MaxAge:           12 * time.Hour, // Questo potrebbe anche essere configurabile
 		})
 	case "staging":
 		return cors.Default()
