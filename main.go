@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -73,25 +74,30 @@ func getCORSConfig() gin.HandlerFunc {
 	env := os.Getenv("ENV")
 	switch env {
 	case "production":
-		origins := os.Getenv("ALLOWED_ORIGINS")
-		originsSlice := strings.Split(origins, ",")
+		allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
+		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
+
 		return cors.New(cors.Config{
-			AllowOrigins: originsSlice,
-			AllowMethods: []string{"POST", "OPTIONS", "GET"},
-			AllowHeaders: []string{
-				"Content-Type",
-				"Content-Length",
-				"Accept-Encoding",
-				"X-CSRF-Token",
-				"Authorization",
-				"accept",
-				"origin",
-				"Cache-Control",
-				"X-Requested-With",
-			},
+			AllowOrigins:     allowedOrigins,
+			AllowMethods:     []string{"POST", "OPTIONS", "GET"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "Accept", "Cache-Control", "X-Requested-With"},
 			ExposeHeaders:    []string{"Content-Length"},
 			AllowCredentials: true,
-			MaxAge:           12 * time.Hour,
+			AllowOriginFunc: func(origin string) bool {
+				for _, pattern := range allowedPatterns {
+					if pattern != "" {
+						if matched, err := regexp.MatchString(pattern, origin); err == nil && matched {
+							return true
+						}
+					}
+				}
+				log.WithFields(log.Fields{
+					"origin": origin,
+					"reason": "CORS blocked (pattern mismatch)",
+				}).Warn("Request blocked by CORS policy")
+				return false
+			},
+			MaxAge: 12 * time.Hour,
 		})
 	case "staging":
 		return cors.Default()
