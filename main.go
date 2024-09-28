@@ -78,15 +78,22 @@ func getCORSConfig() gin.HandlerFunc {
 		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
 
 		return cors.New(cors.Config{
-			AllowOrigins:     allowedOrigins,
-			AllowMethods:     []string{"POST", "OPTIONS", "GET"},
-			AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "Accept", "Cache-Control", "X-Requested-With"},
+			AllowOrigins: allowedOrigins,
+			AllowMethods: []string{"POST", "OPTIONS", "GET"},
+			AllowHeaders: []string{
+				"Origin", "Content-Type", "Content-Length",
+				"Accept-Encoding", "X-CSRF-Token", "Authorization",
+				"Accept", "Cache-Control", "X-Requested-With",
+			},
 			ExposeHeaders:    []string{"Content-Length"},
 			AllowCredentials: true,
 			AllowOriginFunc: func(origin string) bool {
 				for _, pattern := range allowedPatterns {
 					if pattern != "" {
-						if matched, err := regexp.MatchString(pattern, origin); err == nil && matched {
+						if matched, err := regexp.MatchString(
+							pattern,
+							origin,
+						); err == nil && matched {
 							return true
 						}
 					}
