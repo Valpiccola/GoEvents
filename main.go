@@ -80,6 +80,10 @@ func getCORSConfig() gin.HandlerFunc {
 		return cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
 
+				fmt.Println("----------------------------------------")
+				fmt.Println("Incoming request from origin:", origin)
+				fmt.Println("----------------------------------------")
+
 				// Check exact matches
 				for _, allowedOrigin := range allowedOrigins {
 					if allowedOrigin == origin {
