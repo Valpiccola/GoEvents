@@ -37,7 +37,7 @@ func main() {
 	router.POST("/record_event", RecordEvent)
 	router.GET("/health", healthCheckHandler)
 
-	log.Fatal(router.Run(":8085"))
+	log.Fatal(router.Run(os.Getenv("PORT")))
 }
 
 func SetUpDb() (db *sql.DB) {
