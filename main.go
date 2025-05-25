@@ -77,8 +77,12 @@ func getCORSConfig() gin.HandlerFunc {
 		allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
 		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
 
+		fmt.Println("Allowed Patterns:", allowedPatterns)
+
 		return cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
+
+				fmt.Println("Origin:", origin)
 
 				// Check exact matches
 				for _, allowedOrigin := range allowedOrigins {
@@ -98,8 +102,20 @@ func getCORSConfig() gin.HandlerFunc {
 
 				return false
 			},
-			AllowMethods:     []string{"POST", "OPTIONS", "GET"},
-			AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "Accept", "Cache-Control", "X-Requested-With"},
+			AllowMethods: []string{"POST", "OPTIONS", "GET"},
+			AllowHeaders: []string{
+				"Content-Type",
+				"Content-Length",
+				"Accept-Encoding",
+				"X-CSRF-Token",
+				"Authorization",
+				"accept",
+				"origin",
+				"Cache-Control",
+				"X-Requested-With",
+				"sentry-trace",
+				"baggage",
+			},
 			ExposeHeaders:    []string{"Content-Length"},
 			AllowCredentials: true,
 			MaxAge:           12 * time.Hour,
