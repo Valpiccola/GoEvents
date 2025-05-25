@@ -76,48 +76,56 @@ func getCORSConfig() gin.HandlerFunc {
 	case "production":
 		allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
 		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
+		fmt.Println("Environment: production")
 		fmt.Println("Allowed Origins:", allowedOrigins)
 		fmt.Println("Allowed Patterns:", allowedPatterns)
+
 		return cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
-				fmt.Println("Checking Origin:", origin)
+				fmt.Printf("CORS: Checking origin: '%s'\n", origin)
 
 				// Check exact matches
 				for _, allowedOrigin := range allowedOrigins {
 					allowedOrigin = strings.TrimSpace(allowedOrigin)
 					if allowedOrigin == origin {
-						fmt.Println("Exact match found:", allowedOrigin)
+						fmt.Printf("CORS: Exact match found for: '%s'\n", allowedOrigin)
 						return true
 					}
 				}
 
-				// Check patterns
+				// Check regex patterns - fix the pattern matching
 				for _, pattern := range allowedPatterns {
 					pattern = strings.TrimSpace(pattern)
 					if pattern != "" {
-						// Escape dots in the pattern for proper regex matching
-						escapedPattern := strings.ReplaceAll(pattern, ".", "\\.")
-						if matched, err := regexp.MatchString("^"+escapedPattern+"$", origin); err == nil && matched {
-							fmt.Println("Pattern match found:", pattern, "for origin:", origin)
+						fmt.Printf("CORS: Testing pattern: '%s' against origin: '%s'\n", pattern, origin)
+						// Convert pattern to proper regex
+						regexPattern := strings.ReplaceAll(pattern, ".", "\\.")
+						regexPattern = strings.ReplaceAll(regexPattern, "(\\d+)", "\\d+")
+
+						if matched, err := regexp.MatchString("^"+regexPattern+"$", origin); err == nil && matched {
+							fmt.Printf("CORS: Pattern match found: '%s' for origin: '%s'\n", pattern, origin)
 							return true
+						} else if err != nil {
+							fmt.Printf("CORS: Regex error for pattern '%s': %v\n", pattern, err)
 						}
 					}
 				}
 
-				fmt.Println("No match found for origin:", origin)
+				fmt.Printf("CORS: No match found for origin: '%s'\n", origin)
 				return false
 			},
-			AllowMethods: []string{"POST", "OPTIONS", "GET"},
+			AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"},
 			AllowHeaders: []string{
+				"Accept",
+				"Accept-Language",
 				"Content-Type",
 				"Content-Length",
 				"Accept-Encoding",
 				"X-CSRF-Token",
 				"Authorization",
-				"accept",
-				"origin",
 				"Cache-Control",
 				"X-Requested-With",
+				"Origin",
 				"sentry-trace",
 				"baggage",
 			},
@@ -126,21 +134,24 @@ func getCORSConfig() gin.HandlerFunc {
 			MaxAge:           12 * time.Hour,
 		})
 	case "staging":
+		fmt.Println("Environment: staging - using default CORS")
 		return cors.Default()
 	default:
+		fmt.Println("Environment: development - allowing all origins")
 		return cors.New(cors.Config{
 			AllowAllOrigins: true,
-			AllowMethods:    []string{"POST", "OPTIONS", "GET"},
+			AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"},
 			AllowHeaders: []string{
+				"Accept",
+				"Accept-Language",
 				"Content-Type",
 				"Content-Length",
 				"Accept-Encoding",
 				"X-CSRF-Token",
 				"Authorization",
-				"accept",
-				"origin",
 				"Cache-Control",
 				"X-Requested-With",
+				"Origin",
 				"sentry-trace",
 				"baggage",
 			},
