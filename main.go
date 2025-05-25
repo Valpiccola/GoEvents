@@ -34,6 +34,11 @@ func main() {
 		router.Use(corsConfig)
 	}
 
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Server is running"})
+		log.Info("Server is running")
+	})
+
 	router.POST("/record_event", RecordEvent)
 	router.GET("/health", healthCheckHandler)
 
