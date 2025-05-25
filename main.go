@@ -76,9 +76,6 @@ func getCORSConfig() gin.HandlerFunc {
 	case "production":
 		allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
 		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
-		fmt.Println("Environment: production")
-		fmt.Println("Allowed Origins:", allowedOrigins)
-		fmt.Println("Allowed Patterns:", allowedPatterns)
 
 		return cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
@@ -97,11 +94,9 @@ func getCORSConfig() gin.HandlerFunc {
 				for _, pattern := range allowedPatterns {
 					pattern = strings.TrimSpace(pattern)
 					if pattern != "" {
-						fmt.Printf("CORS: Testing pattern: '%s' against origin: '%s'\n", pattern, origin)
 
 						// The pattern is already properly escaped, just use it directly
 						if matched, err := regexp.MatchString("^"+pattern+"$", origin); err == nil && matched {
-							fmt.Printf("CORS: Pattern match found: '%s' for origin: '%s'\n", pattern, origin)
 							return true
 						} else if err != nil {
 							fmt.Printf("CORS: Regex error for pattern '%s': %v\n", pattern, err)
