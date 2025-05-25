@@ -98,15 +98,15 @@ func getCORSConfig() gin.HandlerFunc {
 					pattern = strings.TrimSpace(pattern)
 					if pattern != "" {
 						fmt.Printf("CORS: Testing pattern: '%s' against origin: '%s'\n", pattern, origin)
-						// Convert pattern to proper regex
-						regexPattern := strings.ReplaceAll(pattern, ".", "\\.")
-						regexPattern = strings.ReplaceAll(regexPattern, "(\\d+)", "\\d+")
 
-						if matched, err := regexp.MatchString("^"+regexPattern+"$", origin); err == nil && matched {
+						// The pattern is already properly escaped, just use it directly
+						if matched, err := regexp.MatchString("^"+pattern+"$", origin); err == nil && matched {
 							fmt.Printf("CORS: Pattern match found: '%s' for origin: '%s'\n", pattern, origin)
 							return true
 						} else if err != nil {
 							fmt.Printf("CORS: Regex error for pattern '%s': %v\n", pattern, err)
+						} else {
+							fmt.Printf("CORS: Pattern '%s' did not match origin '%s'\n", pattern, origin)
 						}
 					}
 				}
