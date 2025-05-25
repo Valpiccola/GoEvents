@@ -76,30 +76,35 @@ func getCORSConfig() gin.HandlerFunc {
 	case "production":
 		allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
 		allowedPatterns := strings.Split(os.Getenv("ALLOWED_PATTERNS"), ",")
-
+		fmt.Println("Allowed Origins:", allowedOrigins)
 		fmt.Println("Allowed Patterns:", allowedPatterns)
-
 		return cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
-
-				fmt.Println("Origin:", origin)
+				fmt.Println("Checking Origin:", origin)
 
 				// Check exact matches
 				for _, allowedOrigin := range allowedOrigins {
+					allowedOrigin = strings.TrimSpace(allowedOrigin)
 					if allowedOrigin == origin {
+						fmt.Println("Exact match found:", allowedOrigin)
 						return true
 					}
 				}
 
 				// Check patterns
 				for _, pattern := range allowedPatterns {
+					pattern = strings.TrimSpace(pattern)
 					if pattern != "" {
-						if matched, _ := regexp.MatchString("^"+pattern+"$", origin); matched {
+						// Escape dots in the pattern for proper regex matching
+						escapedPattern := strings.ReplaceAll(pattern, ".", "\\.")
+						if matched, err := regexp.MatchString("^"+escapedPattern+"$", origin); err == nil && matched {
+							fmt.Println("Pattern match found:", pattern, "for origin:", origin)
 							return true
 						}
 					}
 				}
 
+				fmt.Println("No match found for origin:", origin)
 				return false
 			},
 			AllowMethods: []string{"POST", "OPTIONS", "GET"},
@@ -123,7 +128,26 @@ func getCORSConfig() gin.HandlerFunc {
 	case "staging":
 		return cors.Default()
 	default:
-		return nil
+		return cors.New(cors.Config{
+			AllowAllOrigins: true,
+			AllowMethods:    []string{"POST", "OPTIONS", "GET"},
+			AllowHeaders: []string{
+				"Content-Type",
+				"Content-Length",
+				"Accept-Encoding",
+				"X-CSRF-Token",
+				"Authorization",
+				"accept",
+				"origin",
+				"Cache-Control",
+				"X-Requested-With",
+				"sentry-trace",
+				"baggage",
+			},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		})
 	}
 }
 
